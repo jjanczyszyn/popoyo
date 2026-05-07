@@ -12,9 +12,13 @@
 <meta name="theme-color" content="#0e2a2b" />
 <link rel="canonical" href="https://popoyo.co/" />
 
-<!-- Hreflang: same URL serves both languages -->
+<!-- Hreflang: same URL serves all languages (JS swap on load) -->
 <link rel="alternate" hreflang="en" href="https://popoyo.co/" />
 <link rel="alternate" hreflang="es" href="https://popoyo.co/" />
+<link rel="alternate" hreflang="de" href="https://popoyo.co/" />
+<link rel="alternate" hreflang="fr" href="https://popoyo.co/" />
+<link rel="alternate" hreflang="it" href="https://popoyo.co/" />
+<link rel="alternate" hreflang="pt" href="https://popoyo.co/" />
 <link rel="alternate" hreflang="x-default" href="https://popoyo.co/" />
 
 <!-- Open Graph -->
@@ -24,6 +28,10 @@
 <meta property="og:url" content="https://popoyo.co/" />
 <meta property="og:locale" content="en_US" />
 <meta property="og:locale:alternate" content="es_NI" />
+<meta property="og:locale:alternate" content="de_DE" />
+<meta property="og:locale:alternate" content="fr_FR" />
+<meta property="og:locale:alternate" content="it_IT" />
+<meta property="og:locale:alternate" content="pt_BR" />
 <meta property="og:site_name" content="Popoyo.co" />
 
 <!-- Twitter -->
@@ -47,7 +55,7 @@
   (function(){
     try {
       var stored = localStorage.getItem('popoyo_lang');
-      var supported = ['en','es'];
+      var supported = ['en','es','de','fr','it','pt'];
       var browser = (navigator.language || 'en').slice(0,2).toLowerCase();
       var lang = stored && supported.indexOf(stored) > -1
         ? stored
@@ -99,7 +107,7 @@
       "@type": "WebSite",
       "url": "https://popoyo.co/",
       "name": "Popoyo.co",
-      "inLanguage": ["en", "es"]
+      "inLanguage": ["en", "es", "de", "fr", "it", "pt"]
     }
   ]
 }
@@ -179,14 +187,43 @@
   .nav-right{display:flex;align-items:center;gap:14px}
   @media (max-width:760px){.nav-links{display:none}}
 
+  .lang-switcher{position:relative}
   .lang-toggle{
-    font-size:12px;font-weight:600;letter-spacing:.1em;
+    font-size:12px;font-weight:600;letter-spacing:.08em;
     color:var(--muted);background:transparent;
     border:1px solid var(--line);border-radius:999px;
     padding:6px 12px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
     transition:color .2s ease, border-color .2s ease;
   }
   .lang-toggle:hover{color:var(--teal);border-color:var(--teal)}
+  .lang-toggle svg{transition:transform .2s ease}
+  .lang-toggle[aria-expanded="true"] svg{transform:rotate(180deg)}
+  .lang-menu{
+    position:absolute;top:calc(100% + 8px);right:0;z-index:100;
+    background:var(--paper);
+    border:1px solid var(--line-soft);
+    border-radius:14px;
+    padding:6px;margin:0;list-style:none;
+    box-shadow:0 12px 30px -10px rgba(20,37,42,.18), 0 1px 0 rgba(20,37,42,.04);
+    min-width:160px;
+    display:none;
+  }
+  .lang-menu.open{display:block}
+  .lang-menu li{margin:0}
+  .lang-menu button{
+    width:100%;text-align:left;
+    background:transparent;border:0;cursor:pointer;
+    padding:9px 12px;border-radius:10px;
+    font:inherit;font-size:14px;color:var(--ink-2);
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    transition:background .15s ease, color .15s ease;
+  }
+  .lang-menu button:hover{background:var(--sand);color:var(--ink)}
+  .lang-menu button.active{color:var(--teal);font-weight:600}
+  .lang-menu button.active::after{
+    content:"✓";font-size:13px;color:var(--teal);
+  }
 
   .btn{
     display:inline-flex;align-items:center;gap:8px;
@@ -242,13 +279,14 @@
     color:#0e2a2b;background:rgba(255,255,255,.85);
     padding:4px 8px;border-radius:6px;
   }
-  .ph-1{inset:0 28% 32% 0;background:
-    repeating-linear-gradient(135deg,#bcd6d2 0 14px,#a9cbc6 14px 28px),
-    #bcd6d2;}
-  .ph-2{inset:18% 0 8% 38%;background:
-    repeating-linear-gradient(135deg,#e9d2a7 0 14px,#e0c79a 14px 28px);}
-  .ph-3{inset:62% 50% 0 6%;background:
-    repeating-linear-gradient(135deg,#0e5a55 0 14px,#0a4642 14px 28px);color:#fff}
+  .ph{background-size:cover;background-position:center}
+  .ph-1{inset:0 28% 32% 0;
+    background-image:url("https://images.unsplash.com/photo-1761249571329-69d623df6fae?w=900&q=80&auto=format&fit=crop");}
+  .ph-2{inset:18% 0 8% 38%;
+    background-image:url("https://images.unsplash.com/photo-1604482311771-f9148b32a8c2?w=900&q=80&auto=format&fit=crop");}
+  .ph-3{inset:62% 50% 0 6%;
+    background-image:url("https://images.unsplash.com/photo-1721908919503-a8a1106bec3a?w=700&q=80&auto=format&fit=crop");
+    color:#fff}
   .ph-3::after{background:rgba(255,255,255,.92)}
 
   /* Section labels */
@@ -344,40 +382,24 @@
   .map-card{
     border-radius:var(--radius-lg);overflow:hidden;
     border:1px solid var(--line-soft);
-    background:linear-gradient(160deg,#dceae6,#f2e6cb);
+    background:var(--sand);
     aspect-ratio:5/4;position:relative;
-    display:flex;align-items:flex-end;
+    display:block;
   }
-  .map-card .pinmark{
-    position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);
-    width:14px;height:14px;border-radius:50%;background:var(--teal);
-    box-shadow:0 0 0 6px rgba(14,90,85,.18), 0 0 0 14px rgba(14,90,85,.08);
+  .map-card iframe{
+    width:100%;height:100%;border:0;display:block;
+    filter:saturate(1.05);
   }
   .map-card .map-meta{
-    position:relative;z-index:2;background:var(--paper);
-    margin:14px;padding:16px 18px;border-radius:14px;
+    position:absolute;left:0;right:0;bottom:0;z-index:2;
+    background:var(--paper);
+    margin:14px;padding:14px 16px;border-radius:14px;
     display:flex;justify-content:space-between;align-items:center;gap:12px;
-    box-shadow:var(--shadow-sm);width:calc(100% - 28px);
+    box-shadow:var(--shadow-md);
+    text-decoration:none;color:inherit;
+    transition:transform .15s ease;
   }
-  .map-card .grid-bg{
-    position:absolute;inset:0;
-    background-image:
-      linear-gradient(rgba(14,42,43,.05) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(14,42,43,.05) 1px,transparent 1px);
-    background-size:32px 32px;
-  }
-  .map-card .road{
-    position:absolute;left:-10%;right:-10%;top:55%;
-    height:2px;background:rgba(14,42,43,.18);
-    transform:rotate(-6deg);
-  }
-  .map-card .road.r2{top:30%;transform:rotate(8deg);opacity:.6}
-  .map-card .label-coast{
-    position:absolute;left:18px;top:18px;
-    font-family:ui-monospace,Menlo,monospace;font-size:10px;
-    letter-spacing:.16em;text-transform:uppercase;color:#0e2a2b;
-    background:rgba(255,255,255,.78);padding:4px 8px;border-radius:6px;
-  }
+  .map-card .map-meta:hover{transform:translateY(-2px)}
 
   /* Partner / list-your-business — quieter section */
   .partner{
@@ -437,7 +459,20 @@
       <a href="#partner" data-i18n="nav_partner">List your business</a>
     </nav>
     <div class="nav-right">
-      <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch language">ES</button>
+      <div class="lang-switcher">
+        <button id="lang-toggle" class="lang-toggle" type="button" aria-label="Switch language" aria-haspopup="true" aria-expanded="false">
+          <span id="lang-current">EN</span>
+          <svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <ul id="lang-menu" class="lang-menu" role="menu" aria-labelledby="lang-toggle">
+          <li><button type="button" data-lang="en" role="menuitem">English</button></li>
+          <li><button type="button" data-lang="es" role="menuitem">Español</button></li>
+          <li><button type="button" data-lang="de" role="menuitem">Deutsch</button></li>
+          <li><button type="button" data-lang="fr" role="menuitem">Français</button></li>
+          <li><button type="button" data-lang="it" role="menuitem">Italiano</button></li>
+          <li><button type="button" data-lang="pt" role="menuitem">Português</button></li>
+        </ul>
+      </div>
       <a class="btn btn-wa" data-wa href="https://wa.me/50589750052" target="_blank" rel="noopener" aria-label="Chat with us on WhatsApp">
         <svg width="16" height="16" viewBox="0 0 32 32" aria-hidden="true">
           <path fill="#08361a" d="M16 3C8.82 3 3 8.82 3 16c0 2.29.6 4.45 1.65 6.31L3 29l6.85-1.6A12.93 12.93 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3zm0 23.4c-1.99 0-3.86-.55-5.46-1.5l-.39-.23-4.07.95.97-3.97-.25-.41A10.4 10.4 0 1 1 26.4 16c0 5.74-4.66 10.4-10.4 10.4zm5.7-7.78c-.31-.16-1.85-.91-2.13-1.01-.29-.1-.5-.16-.7.16-.21.31-.81 1.01-1 1.22-.18.21-.37.23-.68.08-.31-.16-1.32-.49-2.51-1.55-.93-.83-1.55-1.85-1.74-2.16-.18-.31-.02-.48.14-.63.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.7-1.69-.96-2.31-.25-.6-.5-.52-.7-.53l-.6-.01a1.15 1.15 0 0 0-.84.39c-.29.31-1.1 1.07-1.1 2.62s1.13 3.04 1.29 3.25c.16.21 2.22 3.4 5.39 4.77.75.32 1.34.51 1.79.66.75.24 1.43.21 1.97.13.6-.09 1.85-.76 2.11-1.49.26-.73.26-1.36.18-1.49-.08-.13-.29-.21-.6-.37z"/>
@@ -678,20 +713,21 @@
 
       </div>
 
-      <a class="map-card" href="https://share.google/IXOC6DlEv7Zk9d18W" target="_blank" rel="noopener" aria-label="Open Popoyo location on Google Maps">
-        <div class="grid-bg" aria-hidden="true"></div>
-        <div class="road" aria-hidden="true"></div>
-        <div class="road r2" aria-hidden="true"></div>
-        <span class="label-coast" aria-hidden="true">Costa Esmeralda · Pacific</span>
-        <div class="pinmark" aria-hidden="true"></div>
-        <div class="map-meta">
+      <div class="map-card">
+        <iframe
+          src="https://www.google.com/maps?q=Popoyo,Tola,Rivas,Nicaragua&z=13&output=embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Map of Popoyo, Tola, Rivas — Nicaragua"
+          allowfullscreen></iframe>
+        <a class="map-meta" href="https://www.google.com/maps/search/?api=1&query=Popoyo%2C+Tola%2C+Rivas%2C+Nicaragua" target="_blank" rel="noopener" aria-label="Open Popoyo location on Google Maps">
           <div>
             <div style="font-family:'Instrument Serif',serif;font-size:20px;line-height:1.1">Popoyo</div>
             <div style="font-size:12px;color:var(--muted);margin-top:2px" data-i18n="map_subtitle">Tola, Rivas — Nicaragua</div>
           </div>
           <span style="font-size:13px;color:var(--teal);font-weight:600" data-i18n="map_open">Open in Google Maps →</span>
-        </div>
-      </a>
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -818,8 +854,7 @@
       footer_copy: "© 2026 Popoyo.co · Tola, Rivas · Nicaragua",
       wa_float: "Chat now",
       wa_prefill: "Hola Popoyo, I'd like some help with my trip.",
-      lang_toggle: "ES",
-      lang_aria: "Cambiar a español"
+      lang_aria: "Change language"
     },
     es: {
       title: "Popoyo · Surf, alquiler de motos y servicios locales de confianza en la Costa Esmeralda de Nicaragua",
@@ -900,12 +935,335 @@
       footer_copy: "© 2026 Popoyo.co · Tola, Rivas · Nicaragua",
       wa_float: "Chatea ahora",
       wa_prefill: "Hola Popoyo, me gustaría ayuda con mi viaje.",
-      lang_toggle: "EN",
-      lang_aria: "Switch to English"
+      lang_aria: "Cambiar idioma"
+    },
+    de: {
+      title: "Popoyo · Surfen, Motorradverleih & vertrauenswürdige lokale Services an Nicaraguas Smaragdküste",
+      description: "Dein vertrauenswürdiger lokaler Anlaufpunkt in Popoyo, Nicaragua. Motorradverleih mit Surfracks, Bargeldlieferung, Beauty zu Hause, Kinderbetreuung und Concierge — alles an der Smaragdküste. Surfen, fahren, entspannen.",
+      nav_services: "Services",
+      nav_why: "Über uns",
+      nav_contact: "Kontakt",
+      nav_partner: "Listet euer Geschäft",
+      btn_whatsapp: "WhatsApp",
+      hero_meta: "Popoyo · Tola, Rivas — Nicaraguas Smaragdküste",
+      hero_h1: "Surfen, fahren, entspannen.<br/><span class=\"accent\">Dein vertrauenswürdiger lokaler<br/>Anlaufpunkt in Popoyo, Nicaragua.</span>",
+      hero_lede: "Von <em>Motorradverleih mit Surfracks</em> bis zu Beauty zu Hause, Kinderbetreuung, Bargeldlieferung und Concierge — alles, was du an der Smaragdküste brauchst, von Menschen, die wirklich hier leben.",
+      cta_wa: "Schreib uns auf WhatsApp",
+      cta_browse: "Services ansehen →",
+      trust1: "<b>Lokal & geprüft</b>Geführt von Menschen, die das ganze Jahr in Popoyo leben.",
+      trust2: "<b>Echte Menschen auf WhatsApp</b>Antwort in Minuten, 7&nbsp;Tage die Woche.",
+      trust3: "<b>Transparente Preise</b>Keine Überraschungen, kein versteckter Touristenaufschlag.",
+      trust4: "<b>Empfohlen von der Surf-Crew</b>Empfohlen von Hostels, Camps und Locals.",
+      ph1_label: "Smaragdküste · Pointbreak bei Sonnenuntergang",
+      ph2_label: "Motorrad + Surfrack auf der Schotterpiste",
+      ph3_label: "Hängematte + kalte Kokosnuss",
+      services_eyebrow: "Was wir anbieten",
+      services_h: "Fünf Geschäfte, eine vertrauenswürdige Hand.",
+      services_lede: "Alle geführt von Leuten in Popoyo — buche eines und derselbe WhatsApp organisiert dir den Rest.",
+      moto_badge: "Am beliebtesten",
+      moto_h: "Karen & JJ Moto Rental",
+      moto_p: "Zuverlässige Motorräder für die Schotterpisten von Popoyo — jedes Bike kommt mit <b>Surfrack</b> ohne Aufpreis, und wir liefern überall an der Smaragdküste.",
+      moto_li1: "Surfrack bei jedem Verleih inklusive",
+      moto_li2: "Kostenlose Lieferung zu deiner Unterkunft",
+      moto_li3: "Helm, Schloss und 24/7 Pannenhilfe",
+      moto_li4: "Tages-, Wochen- und Langzeittarife",
+      moto_cta: "Motorrad mieten →",
+      concierge_badge: "Plane deinen Aufenthalt",
+      concierge_h: "Popoyo Concierge",
+      concierge_p: "Der einfache Weg für deine Reise. Sag uns deine Daten und wir kümmern uns um den Rest — Unterkunft, Transfers, Surfstunden, Ausflüge, Spa, alles was du brauchst.",
+      concierge_li1: "Unterkunftssuche & Buchungen",
+      concierge_li2: "Flughafentransfers von Managua & Liberia",
+      concierge_li3: "Fahrzeug- & Equipmentverleih",
+      concierge_li4: "Surfstunden, Ausflüge & Spa-Tage",
+      concierge_cta: "Mit uns planen →",
+      cash_h: "Bargeld-Lieferung",
+      cash_p: "Kein Geldautomat in der Nähe? Wir bringen dir Bargeld — schnell, diskret und vertrauenswürdig für Gäste, die nicht eine Stunde fahren wollen.",
+      cash_cta: "Bargeld anfordern →",
+      beauty_h: "Beauty zu Hause",
+      beauty_p: "Massage, Friseur und Nagelpflege bei dir in der Villa oder im Hostel. Perfekt nach einem langen Tag im Wasser.",
+      beauty_cta: "Termin buchen →",
+      childcare_h: "Kinderbetreuung & Nannys",
+      childcare_p: "Vertrauenswürdige lokale Nannys für Babysitting, Strandtage und Schlafenszeit — damit Eltern endlich die Dawn Patrol surfen können.",
+      childcare_cta: "Nanny finden →",
+      why_eyebrow: "Warum man uns wählt",
+      why_h: "Eine sicherere, ruhigere Art Popoyo zu erleben.",
+      why_p: "Die Smaragdküste ist wild und schön — aber die Logistik hier kann knifflig sein. Wir sind das lokale Team, das ans Telefon geht, pünktlich erscheint und deine Reise behandelt, als hänge unser Ruf davon ab. Tut er auch.",
+      why_p1_b: "Eine Nummer für alles",
+      why_p1_t: "Derselbe WhatsApp deckt alle Services ab. Keine Apps, kein Hin und Her.",
+      why_p2_b: "Versicherung & Sicherheit zuerst",
+      why_p2_t: "Helme inklusive, Bikes wöchentlich gewartet, geprüfte Fahrer und Nannys.",
+      why_p3_b: "Lokal verantwortlich",
+      why_p3_t: "Wir leben und arbeiten das ganze Jahr in Popoyo. Du findest uns persönlich.",
+      why_p4_b: "Englisch & Spanisch",
+      why_p4_t: "Zweisprachiges Team. Klare Kommunikation, kein Google-Translate-Raten.",
+      contact_eyebrow: "Kontaktiere uns",
+      contact_h: "Erreich eine echte Person, schnell.",
+      contact_lede: "Die meisten Antworten in unter 10 Minuten tagsüber (UTC−6).",
+      contact_wa_h: "WhatsApp",
+      contact_wa_btn: "Nachricht senden",
+      contact_email_h: "Email",
+      contact_email_p: "Für längere Anfragen, Gruppenbuchungen und Partnerschaften.",
+      contact_find_h: "Finde uns",
+      contact_find_a: "Popoyo, Tola — Rivas, Nicaragua",
+      contact_find_p: "An der Smaragdküste, ~2,5h südlich vom Flughafen Managua.",
+      map_open: "In Google Maps öffnen →",
+      map_subtitle: "Tola, Rivas — Nicaragua",
+      partner_eyebrow: "Für lokale Geschäfte",
+      partner_h: "Du hast ein Geschäft in Popoyo? Lass dich hier listen.",
+      partner_p: "Wir präsentieren sorgfältig geprüfte lokale Geschäfte auf popoyo.co für eine kleine Jahresgebühr. Wenn du einen Qualitätsservice für Reisende anbietest — Restaurants, Yoga, Fotografie, Wäscherei, alles — würden wir gerne von dir hören.",
+      partner_cta: "Email an hello@popoyo.co →",
+      footer_tag: "Surfen, fahren, entspannen — Popoyo, Nicaraguas Smaragdküste.",
+      footer_copy: "© 2026 Popoyo.co · Tola, Rivas · Nicaragua",
+      wa_float: "Jetzt chatten",
+      wa_prefill: "Hallo Popoyo, ich hätte gerne Hilfe bei meiner Reise.",
+      lang_aria: "Sprache wechseln"
+    },
+    fr: {
+      title: "Popoyo · Surf, location de motos et services locaux de confiance sur la Côte d'Émeraude du Nicaragua",
+      description: "Votre repère local de confiance à Popoyo, Nicaragua. Location de motos avec porte-planches, livraison d'argent, beauté à domicile, garde d'enfants et conciergerie — tout sur la Côte d'Émeraude. Surfez, roulez, détendez-vous.",
+      nav_services: "Services",
+      nav_why: "Pourquoi nous",
+      nav_contact: "Contact",
+      nav_partner: "Listez votre business",
+      btn_whatsapp: "WhatsApp",
+      hero_meta: "Popoyo · Tola, Rivas — Côte d'Émeraude du Nicaragua",
+      hero_h1: "Surfez, roulez, détendez-vous.<br/><span class=\"accent\">Votre repère local de confiance<br/>à Popoyo, Nicaragua.</span>",
+      hero_lede: "De la <em>location de motos avec porte-planches</em> à la beauté à domicile, garde d'enfants, livraison d'argent et conciergerie — tout ce qu'il vous faut sur la Côte d'Émeraude, géré par des gens qui vivent ici.",
+      cta_wa: "Écrivez-nous sur WhatsApp",
+      cta_browse: "Voir les services →",
+      trust1: "<b>Local & vérifié</b>Géré par des gens qui vivent à Popoyo toute l'année.",
+      trust2: "<b>De vraies personnes sur WhatsApp</b>Réponse en quelques minutes, 7&nbsp;jours sur 7.",
+      trust3: "<b>Prix transparents</b>Pas de surprises, pas de surcharge touriste.",
+      trust4: "<b>Recommandés par la surf community</b>Recommandés par les hostels, camps et locaux.",
+      ph1_label: "Côte d'Émeraude · point break au coucher du soleil",
+      ph2_label: "Moto + porte-planche sur la piste",
+      ph3_label: "Hamac + noix de coco fraîche",
+      services_eyebrow: "Ce que nous offrons",
+      services_h: "Cinq business, une seule main de confiance.",
+      services_lede: "Tous gérés par des gens basés à Popoyo — réservez l'un, et le même WhatsApp vous obtient le reste.",
+      moto_badge: "Le plus populaire",
+      moto_h: "Karen & JJ Moto Rental",
+      moto_p: "Motos fiables conçues pour les pistes de Popoyo — chaque moto louée avec un <b>porte-planche</b> sans frais supplémentaires, et livraison à votre porte partout sur la Côte d'Émeraude.",
+      moto_li1: "Porte-planche inclus à chaque location",
+      moto_li2: "Livraison gratuite à votre logement",
+      moto_li3: "Casque, antivol et assistance 24/7",
+      moto_li4: "Tarifs journaliers, hebdomadaires et longue durée",
+      moto_cta: "Louer une moto →",
+      concierge_badge: "Planifiez votre séjour",
+      concierge_h: "Popoyo Conciergerie",
+      concierge_p: "Le bouton facile pour votre voyage. Donnez-nous vos dates et on s'occupe du reste — logement, transferts, cours de surf, excursions, spa, tout le reste.",
+      concierge_li1: "Recherche & réservation de logement",
+      concierge_li2: "Transferts aéroport depuis Managua & Liberia",
+      concierge_li3: "Location de véhicules & équipement",
+      concierge_li4: "Cours de surf, excursions & spa",
+      concierge_cta: "Planifier avec nous →",
+      cash_h: "Livraison d'Argent",
+      cash_p: "Pas de DAB à proximité ? On vous apporte l'argent — rapide, discret et de confiance pour les invités qui ne veulent pas conduire une heure.",
+      cash_cta: "Demander de l'argent →",
+      beauty_h: "Beauté à Domicile",
+      beauty_p: "Massage, coiffure et soins des ongles à votre villa ou hostel. Parfait après une longue journée dans l'eau.",
+      beauty_cta: "Réserver une séance →",
+      childcare_h: "Garde d'Enfants & Nannies",
+      childcare_p: "Nannies locales de confiance pour le babysitting, journées plage et heure du coucher — pour que les parents puissent enfin surfer la dawn patrol.",
+      childcare_cta: "Trouver une nanny →",
+      why_eyebrow: "Pourquoi on nous choisit",
+      why_h: "Une façon plus sûre et plus calme de vivre Popoyo.",
+      why_p: "La Côte d'Émeraude est sauvage et belle — mais la logistique ici peut être délicate. On est l'équipe locale qui décroche le téléphone, arrive à l'heure et traite votre voyage comme si notre réputation en dépendait. Parce que c'est le cas.",
+      why_p1_b: "Un seul numéro pour tout",
+      why_p1_t: "Le même WhatsApp couvre tous les services. Pas d'apps, pas de détours.",
+      why_p2_b: "Assurance & sécurité d'abord",
+      why_p2_t: "Casques inclus, motos révisées chaque semaine, conducteurs et nannies vérifiés.",
+      why_p3_b: "Responsabilité locale",
+      why_p3_t: "On vit et travaille à Popoyo toute l'année. Vous pouvez nous trouver en personne.",
+      why_p4_b: "Anglais & Espagnol",
+      why_p4_t: "Équipe bilingue. Communication claire, sans deviner avec Google Translate.",
+      contact_eyebrow: "Contactez-nous",
+      contact_h: "Joignez une vraie personne, vite.",
+      contact_lede: "La plupart des réponses en moins de 10 minutes en journée (UTC−6).",
+      contact_wa_h: "WhatsApp",
+      contact_wa_btn: "Envoyer un message",
+      contact_email_h: "Email",
+      contact_email_p: "Pour les demandes longues, réservations de groupe et partenariats.",
+      contact_find_h: "Trouvez-nous",
+      contact_find_a: "Popoyo, Tola — Rivas, Nicaragua",
+      contact_find_p: "Sur la Côte d'Émeraude, ~2h30 au sud de l'aéroport de Managua.",
+      map_open: "Ouvrir dans Google Maps →",
+      map_subtitle: "Tola, Rivas — Nicaragua",
+      partner_eyebrow: "Pour les business locaux",
+      partner_h: "Vous avez un business à Popoyo ? Listez-le ici.",
+      partner_p: "On présente des business locaux soigneusement sélectionnés sur popoyo.co pour une petite cotisation annuelle. Si vous offrez un service de qualité pour voyageurs — restaurants, yoga, photographie, blanchisserie, n'importe quoi — on aimerait avoir de vos nouvelles.",
+      partner_cta: "Écrire à hello@popoyo.co →",
+      footer_tag: "Surfez, roulez, détendez-vous — Popoyo, Côte d'Émeraude du Nicaragua.",
+      footer_copy: "© 2026 Popoyo.co · Tola, Rivas · Nicaragua",
+      wa_float: "Chattez maintenant",
+      wa_prefill: "Hola Popoyo, j'aimerais de l'aide pour mon voyage.",
+      lang_aria: "Changer de langue"
+    },
+    it: {
+      title: "Popoyo · Surf, noleggio moto e servizi locali di fiducia sulla Costa Smeralda del Nicaragua",
+      description: "Il tuo punto di riferimento locale a Popoyo, Nicaragua. Noleggio moto con porta-tavole, consegna contanti, bellezza a domicilio, baby-sitting e concierge — tutto sulla Costa Smeralda. Surfa, guida, rilassati.",
+      nav_services: "Servizi",
+      nav_why: "Chi siamo",
+      nav_contact: "Contatti",
+      nav_partner: "Aggiungi la tua attività",
+      btn_whatsapp: "WhatsApp",
+      hero_meta: "Popoyo · Tola, Rivas — Costa Smeralda del Nicaragua",
+      hero_h1: "Surfa, guida, rilassati.<br/><span class=\"accent\">Il tuo punto di riferimento<br/>locale a Popoyo, Nicaragua.</span>",
+      hero_lede: "Dal <em>noleggio moto con porta-tavole</em> alla bellezza a domicilio, baby-sitting, consegna contanti e concierge — tutto quello che ti serve sulla Costa Smeralda, gestito da gente che vive qui.",
+      cta_wa: "Scrivici su WhatsApp",
+      cta_browse: "Vedi i servizi →",
+      trust1: "<b>Locali e verificati</b>Gestito da persone che vivono a Popoyo tutto l'anno.",
+      trust2: "<b>Persone vere su WhatsApp</b>Risposta in minuti, 7&nbsp;giorni su 7.",
+      trust3: "<b>Prezzi trasparenti</b>Niente sorprese, nessuna tassa turista nascosta.",
+      trust4: "<b>Raccomandati dalla surf community</b>Consigliati da hostel, camp e locali.",
+      ph1_label: "Costa Smeralda · point break al tramonto",
+      ph2_label: "Moto + porta-tavole sulla strada sterrata",
+      ph3_label: "Amaca + cocco fresco",
+      services_eyebrow: "Cosa offriamo",
+      services_h: "Cinque attività, una sola mano di fiducia.",
+      services_lede: "Tutto gestito da gente di Popoyo — prenota uno e lo stesso WhatsApp ti dà il resto.",
+      moto_badge: "Più popolare",
+      moto_h: "Karen & JJ Moto Rental",
+      moto_p: "Moto affidabili per le strade sterrate di Popoyo — ogni moto noleggiata con <b>porta-tavole</b> senza costi extra, e te la consegniamo a casa ovunque sulla Costa Smeralda.",
+      moto_li1: "Porta-tavole incluso in ogni noleggio",
+      moto_li2: "Consegna gratuita al tuo alloggio",
+      moto_li3: "Casco, lucchetto e assistenza stradale 24/7",
+      moto_li4: "Tariffe giornaliere, settimanali e per soggiorni lunghi",
+      moto_cta: "Noleggia una moto →",
+      concierge_badge: "Pianifica il soggiorno",
+      concierge_h: "Popoyo Concierge",
+      concierge_p: "Il pulsante facile per il tuo viaggio. Dicci le date e ci occupiamo del resto — alloggio, transfer, lezioni di surf, escursioni, spa, qualsiasi cosa.",
+      concierge_li1: "Ricerca e prenotazione alloggi",
+      concierge_li2: "Transfer aeroportuali da Managua e Liberia",
+      concierge_li3: "Noleggio veicoli ed equipaggiamento",
+      concierge_li4: "Lezioni di surf, escursioni e spa",
+      concierge_cta: "Pianifica con noi →",
+      cash_h: "Consegna Contanti",
+      cash_p: "Niente bancomat vicino? Ti portiamo i contanti — veloce, discreto e affidabile per ospiti che non vogliono guidare un'ora.",
+      cash_cta: "Richiedi contanti →",
+      beauty_h: "Bellezza a Domicilio",
+      beauty_p: "Massaggi, parrucchiere e cura delle unghie nella tua villa o hostel. Perfetto dopo una lunga giornata in acqua.",
+      beauty_cta: "Prenota una sessione →",
+      childcare_h: "Baby-sitting e Tate",
+      childcare_p: "Tate locali di fiducia per baby-sitting, giornate in spiaggia e ora della nanna — così i genitori possono finalmente surfare l'alba.",
+      childcare_cta: "Trova una tata →",
+      why_eyebrow: "Perché ci scelgono",
+      why_h: "Un modo più sicuro e tranquillo di vivere Popoyo.",
+      why_p: "La Costa Smeralda è selvaggia e bellissima — ma la logistica qui può essere complicata. Siamo il team locale che risponde al telefono, arriva puntuale e tratta il tuo viaggio come se la nostra reputazione dipendesse da questo. Perché è così.",
+      why_p1_b: "Un numero per tutto",
+      why_p1_t: "Lo stesso WhatsApp copre tutti i servizi. Niente app, niente giri.",
+      why_p2_b: "Assicurazione e sicurezza prima di tutto",
+      why_p2_t: "Caschi inclusi, moto revisionate ogni settimana, autisti e tate verificati.",
+      why_p3_b: "Responsabilità locale",
+      why_p3_t: "Viviamo e lavoriamo a Popoyo tutto l'anno. Ci puoi trovare di persona.",
+      why_p4_b: "Inglese e Spagnolo",
+      why_p4_t: "Team bilingue. Comunicazione chiara, senza indovinare con Google Translate.",
+      contact_eyebrow: "Contattaci",
+      contact_h: "Parla con una persona vera, subito.",
+      contact_lede: "La maggior parte delle risposte in meno di 10 minuti durante il giorno (UTC−6).",
+      contact_wa_h: "WhatsApp",
+      contact_wa_btn: "Invia un messaggio",
+      contact_email_h: "Email",
+      contact_email_p: "Per richieste lunghe, prenotazioni di gruppo e collaborazioni.",
+      contact_find_h: "Trovaci",
+      contact_find_a: "Popoyo, Tola — Rivas, Nicaragua",
+      contact_find_p: "Sulla Costa Smeralda, ~2,5h a sud dell'aeroporto di Managua.",
+      map_open: "Apri in Google Maps →",
+      map_subtitle: "Tola, Rivas — Nicaragua",
+      partner_eyebrow: "Per attività locali",
+      partner_h: "Hai un'attività a Popoyo? Inseriscila qui.",
+      partner_p: "Mettiamo in evidenza attività locali selezionate su popoyo.co per una piccola tariffa annuale. Se offri un servizio di qualità per i viaggiatori — ristoranti, yoga, fotografia, lavanderia, qualsiasi cosa — ci farebbe piacere sentirti.",
+      partner_cta: "Scrivi a hello@popoyo.co →",
+      footer_tag: "Surfa, guida, rilassati — Popoyo, Costa Smeralda del Nicaragua.",
+      footer_copy: "© 2026 Popoyo.co · Tola, Rivas · Nicaragua",
+      wa_float: "Chatta ora",
+      wa_prefill: "Hola Popoyo, vorrei aiuto per il mio viaggio.",
+      lang_aria: "Cambia lingua"
+    },
+    pt: {
+      title: "Popoyo · Surf, aluguel de motos e serviços locais de confiança na Costa Esmeralda da Nicarágua",
+      description: "Seu ponto local de confiança em Popoyo, Nicarágua. Aluguel de motos com racks de surf, entrega de dinheiro, beleza em casa, babá e concierge — tudo na Costa Esmeralda. Surfe, dirija, relaxe.",
+      nav_services: "Serviços",
+      nav_why: "Quem somos",
+      nav_contact: "Contato",
+      nav_partner: "Liste seu negócio",
+      btn_whatsapp: "WhatsApp",
+      hero_meta: "Popoyo · Tola, Rivas — Costa Esmeralda da Nicarágua",
+      hero_h1: "Surfe, dirija, relaxe.<br/><span class=\"accent\">Seu ponto local de confiança<br/>em Popoyo, Nicarágua.</span>",
+      hero_lede: "Do <em>aluguel de motos com racks de surf</em> à beleza em casa, babás, entrega de dinheiro e concierge — tudo o que você precisa na Costa Esmeralda, gerenciado por quem mora aqui.",
+      cta_wa: "Mande mensagem no WhatsApp",
+      cta_browse: "Ver serviços →",
+      trust1: "<b>Local & verificado</b>Gerenciado por gente que mora em Popoyo o ano todo.",
+      trust2: "<b>Pessoas reais no WhatsApp</b>Resposta em minutos, 7&nbsp;dias por semana.",
+      trust3: "<b>Preços transparentes</b>Sem surpresas, sem taxa de turista escondida.",
+      trust4: "<b>Recomendados pelo pessoal do surf</b>Recomendados por hostels, camps e locais.",
+      ph1_label: "Costa Esmeralda · point break ao pôr do sol",
+      ph2_label: "Moto + rack de surf na estrada de terra",
+      ph3_label: "Rede + coco gelado",
+      services_eyebrow: "O que oferecemos",
+      services_h: "Cinco negócios, uma só mão de confiança.",
+      services_lede: "Tudo gerenciado por quem mora em Popoyo — reserve um e o mesmo WhatsApp te consegue o resto.",
+      moto_badge: "Mais popular",
+      moto_h: "Karen & JJ Moto Rental",
+      moto_p: "Motos confiáveis feitas para as estradas de terra de Popoyo — toda moto vem com <b>rack de surf</b> sem custo extra, e entregamos na sua porta em qualquer ponto da Costa Esmeralda.",
+      moto_li1: "Rack de surf incluso em todo aluguel",
+      moto_li2: "Entrega gratuita na sua hospedagem",
+      moto_li3: "Capacete, cadeado e assistência 24/7",
+      moto_li4: "Diárias, semanais e estadias longas",
+      moto_cta: "Alugar uma moto →",
+      concierge_badge: "Planeje sua estadia",
+      concierge_h: "Popoyo Concierge",
+      concierge_p: "O botão fácil para sua viagem. Conte as datas e organizamos o resto — hospedagem, transfers, aulas de surf, passeios, spa, o que precisar.",
+      concierge_li1: "Busca e reservas de hospedagem",
+      concierge_li2: "Transfers de aeroporto de Manágua e Liberia",
+      concierge_li3: "Aluguel de veículos e equipamento",
+      concierge_li4: "Aulas de surf, passeios e spa",
+      concierge_cta: "Planejar com a gente →",
+      cash_h: "Entrega de Dinheiro",
+      cash_p: "Sem caixa eletrônico por perto? Levamos o dinheiro até você — rápido, discreto e confiável para quem não quer dirigir uma hora.",
+      cash_cta: "Pedir dinheiro →",
+      beauty_h: "Beleza em Casa",
+      beauty_p: "Massagem, cabeleireiro e unhas na sua villa ou hostel. Perfeito depois de um dia longo na água.",
+      beauty_cta: "Reservar sessão →",
+      childcare_h: "Babás e Cuidado Infantil",
+      childcare_p: "Babás locais de confiança para babá, dia de praia e hora de dormir — pra os pais finalmente surfarem o dawn patrol.",
+      childcare_cta: "Encontrar babá →",
+      why_eyebrow: "Por que nos escolhem",
+      why_h: "Um jeito mais seguro e tranquilo de curtir Popoyo.",
+      why_p: "A Costa Esmeralda é selvagem e linda — mas a logística aqui pode ser complicada. Somos o time local que atende o telefone, chega no horário e trata sua viagem como se nossa reputação dependesse disso. Porque depende.",
+      why_p1_b: "Um número pra tudo",
+      why_p1_t: "O mesmo WhatsApp cobre todos os serviços. Sem apps, sem rodeios.",
+      why_p2_b: "Seguro e segurança em primeiro lugar",
+      why_p2_t: "Capacetes inclusos, motos revisadas semanalmente, motoristas e babás verificados.",
+      why_p3_b: "Responsabilidade local",
+      why_p3_t: "Vivemos e trabalhamos em Popoyo o ano todo. Você nos encontra pessoalmente.",
+      why_p4_b: "Inglês e Espanhol",
+      why_p4_t: "Time bilíngue. Comunicação clara, sem adivinhar com Google Translate.",
+      contact_eyebrow: "Entre em contato",
+      contact_h: "Fale com uma pessoa real, agora.",
+      contact_lede: "Maioria das respostas em menos de 10 minutos durante o dia (UTC−6).",
+      contact_wa_h: "WhatsApp",
+      contact_wa_btn: "Enviar mensagem",
+      contact_email_h: "Email",
+      contact_email_p: "Para pedidos longos, reservas de grupo e parcerias.",
+      contact_find_h: "Encontre-nos",
+      contact_find_a: "Popoyo, Tola — Rivas, Nicarágua",
+      contact_find_p: "Na Costa Esmeralda, a ~2,5h ao sul do aeroporto de Manágua.",
+      map_open: "Abrir no Google Maps →",
+      map_subtitle: "Tola, Rivas — Nicarágua",
+      partner_eyebrow: "Para negócios locais",
+      partner_h: "Tem um negócio em Popoyo? Liste aqui.",
+      partner_p: "Destacamos negócios locais cuidadosamente selecionados em popoyo.co por uma pequena taxa anual. Se você oferece um serviço de qualidade pra viajantes — restaurantes, yoga, fotografia, lavanderia, qualquer coisa — adoraríamos saber.",
+      partner_cta: "Escrever para hello@popoyo.co →",
+      footer_tag: "Surfe, dirija, relaxe — Popoyo, Costa Esmeralda da Nicarágua.",
+      footer_copy: "© 2026 Popoyo.co · Tola, Rivas · Nicarágua",
+      wa_float: "Conversar agora",
+      wa_prefill: "Hola Popoyo, gostaria de ajuda com minha viagem.",
+      lang_aria: "Mudar idioma"
     }
   };
 
-  const supported = ['en', 'es'];
+  const supported = ['en', 'es', 'de', 'fr', 'it', 'pt'];
   const WA_NUMBER = '50589750052';
 
   function detectLang() {
@@ -924,8 +1282,9 @@
     document.title = t.title;
     const desc = document.querySelector('meta[name="description"]');
     if (desc) desc.setAttribute('content', t.description);
+    const ogLocaleMap = {en:'en_US', es:'es_NI', de:'de_DE', fr:'fr_FR', it:'it_IT', pt:'pt_BR'};
     const ogLocale = document.querySelector('meta[property="og:locale"]');
-    if (ogLocale) ogLocale.setAttribute('content', lang === 'es' ? 'es_NI' : 'en_US');
+    if (ogLocale) ogLocale.setAttribute('content', ogLocaleMap[lang] || 'en_US');
 
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       const key = el.getAttribute('data-i18n');
@@ -950,23 +1309,48 @@
     });
 
     const tg = document.getElementById('lang-toggle');
-    if (tg) {
-      tg.textContent = t.lang_toggle;
-      tg.setAttribute('aria-label', t.lang_aria);
-    }
+    if (tg) tg.setAttribute('aria-label', t.lang_aria);
+    const cur = document.getElementById('lang-current');
+    if (cur) cur.textContent = lang.toUpperCase();
+    document.querySelectorAll('#lang-menu button[data-lang]').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+    });
   }
 
   const initial = detectLang();
   apply(initial);
 
-  document.addEventListener('click', function(e){
-    const tg = e.target.closest && e.target.closest('#lang-toggle');
-    if (!tg) return;
-    const cur = document.documentElement.lang;
-    const next = cur === 'es' ? 'en' : 'es';
-    try { localStorage.setItem('popoyo_lang', next); } catch(e) {}
-    apply(next);
-  });
+  const toggle = document.getElementById('lang-toggle');
+  const menu = document.getElementById('lang-menu');
+  if (toggle && menu) {
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      const isOpen = menu.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    menu.addEventListener('click', function(e){
+      const btn = e.target.closest && e.target.closest('button[data-lang]');
+      if (!btn) return;
+      const next = btn.getAttribute('data-lang');
+      if (!next || supported.indexOf(next) < 0) return;
+      try { localStorage.setItem('popoyo_lang', next); } catch(err) {}
+      apply(next);
+      menu.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
+    });
+    document.addEventListener('click', function(e){
+      if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') {
+        menu.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
 })();
 </script>
 
